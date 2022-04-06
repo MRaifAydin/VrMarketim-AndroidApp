@@ -1,0 +1,4 @@
+io/flutter/plugins/GeneratedPluginRegistrant.java
+ io.flutter.plugins.GeneratedPluginRegistrant
+com/example/vr_marketim/BuildConfig.java
+ com.example.vr_marketim.BuildConfig
