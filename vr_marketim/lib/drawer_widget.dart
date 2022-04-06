@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 
+import 'first_screen.dart';
+import 'second_screen.dart';
+
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({Key? key, required this.title}) : super(key: key);
 
@@ -27,12 +30,20 @@ class DrawerWidget extends StatelessWidget {
               title: const Text('Item 1'),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FirstScreen()),
+                );
               },
             ),
             ListTile(
               title: const Text('Item 2'),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SecondScreen()),
+                );
               },
             ),
           ],
