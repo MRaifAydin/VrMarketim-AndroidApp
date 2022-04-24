@@ -27,7 +27,7 @@ class DrawerWidget extends StatelessWidget {
               child: Text('İşlemler'),
             ),
             ListTile(
-              title: const Text('Item 1'),
+              title: const Text('Login - Register'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
