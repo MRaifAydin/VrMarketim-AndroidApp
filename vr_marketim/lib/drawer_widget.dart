@@ -13,8 +13,8 @@ class DrawerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      body: const Center(
-        child: Text('My Page!'),
+      body: Center(
+        child: ElevatedButton(onPressed: null, child: Text("Open Vr App")),
       ),
       drawer: Drawer(
         child: ListView(
