@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 
-import 'first_screen.dart';
-import 'second_screen.dart';
+import 'register_login.dart';
+import 'update_user.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({Key? key, required this.title}) : super(key: key);
@@ -32,17 +32,17 @@ class DrawerWidget extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FirstScreen()),
+                  MaterialPageRoute(builder: (context) => RegisterLogin()),
                 );
               },
             ),
             ListTile(
-              title: const Text('Item 2'),
+              title: const Text('Edit Account Info'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SecondScreen()),
+                  MaterialPageRoute(builder: (context) => UpdateUser()),
                 );
               },
             ),
