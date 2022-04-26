@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
+import 'package:vr_marketim/pages/virtual_card.dart';
 
-import 'register_login.dart';
-import 'update_user.dart';
+import './pages/register_login.dart';
+import './pages/update_user.dart';
+import './pages/basket.dart';
+import './pages/virtual_card.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({Key? key, required this.title}) : super(key: key);
@@ -22,7 +25,7 @@ class DrawerWidget extends StatelessWidget {
           children: [
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.red,
               ),
               child: Text('İşlemler'),
             ),
@@ -43,6 +46,26 @@ class DrawerWidget extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => UpdateUser()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Basket'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BasketTable()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Virtual Card'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => VirtualCard()),
                 );
               },
             ),
