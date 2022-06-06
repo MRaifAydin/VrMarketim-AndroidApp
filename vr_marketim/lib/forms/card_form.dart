@@ -1,6 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
-import '../requests.dart';
 import 'package:flutter/foundation.dart';
 
 class CardForm extends StatefulWidget {
@@ -8,13 +9,6 @@ class CardForm extends StatefulWidget {
 
   @override
   State<CardForm> createState() => _CardFormState();
-}
-
-late Future<Album> futureAlbum;
-@override
-void initState() {
-  // initState();
-  futureAlbum = fetchAlbum();
 }
 
 class _CardFormState extends State<CardForm> {
@@ -104,16 +98,7 @@ class _CardFormState extends State<CardForm> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: ElevatedButton(
-                onPressed: () {
-                  initState();
-                  debugPrint('$futureAlbum');
-
-                  // Validate will return true if the form is valid, or false if
-                  // the form is invalid.
-                  if (_formKey.currentState!.validate()) {
-                    // Process data.
-                  }
-                },
+                onPressed: null,
                 child: const Text('Kaydet'),
               ),
             ),
