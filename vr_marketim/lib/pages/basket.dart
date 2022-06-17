@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:vr_marketim/basketEntity.dart';
 import 'package:vr_marketim/products.dart';
 
-Future<List> fetchAlbum() async {
-  final response =
-      await http.get(Uri.parse('http://10.0.2.2:5002/api/products'));
+Future<List> fetchProducts() async {
+  final response = await http
+      .get(Uri.parse('http://10.0.2.2:5002/api/baskets/getAllBasket/123321'));
 
   if (response.statusCode == 200) {
-    List users = (json.decode(response.body) as List)
+    List products = (json.decode(response.body) as List)
         .map((data) => Products.fromJson(data))
         .toList();
-    return users;
+    return products;
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
@@ -21,31 +23,15 @@ Future<List> fetchAlbum() async {
   }
 }
 
-List<DataRow> createRows(List snapshot) {
-  List<DataRow> rows = [];
-  for (int i = 0; i < snapshot.length; ++i) {
-    rows.add(
-      DataRow(
-        cells: <DataCell>[
-          DataCell(Center(
-            child: Text('${snapshot[i].name}'),
-          )),
-          DataCell(Center(
-            child: Text('${snapshot[i].description}'),
-          )),
-          DataCell(Center(
-            child: FloatingActionButton.small(
-              heroTag: i,
-              onPressed: null,
-              child: Icon(Icons.delete),
-              backgroundColor: Colors.red,
-            ),
-          ))
-        ],
-      ),
-    );
-  }
-  return rows;
+Future<http.Response> deleteAlbum(String id) async {
+  final http.Response response = await http.delete(
+    Uri.parse('http://10.0.2.2:5002/api/baskets/123321/' + id),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+  );
+
+  return response;
 }
 
 class BasketTable extends StatefulWidget {
@@ -56,12 +42,59 @@ class BasketTable extends StatefulWidget {
 }
 
 class _BasketTableState extends State<BasketTable> {
-  late Future<List> futureAlbum;
+  late Future<List> basketAlbum;
+  List<DataRow> rows = [];
+
+  List<DataRow> createRows(snapshot) {
+    for (int i = 0; i < snapshot.length; i++) {
+      rows.add(
+        DataRow(
+          cells: <DataCell>[
+            DataCell(Center(
+              child: Text(snapshot[i].name.toString()),
+            )),
+            DataCell(Center(
+              child: Text(snapshot[i].description.toString()),
+            )),
+            DataCell(Center(
+              child: FloatingActionButton.small(
+                heroTag: i,
+                onPressed: () {
+                  setState(() {
+                    deleteRow(snapshot[i].id, i);
+                    debugPrint("setted state");
+                  });
+                },
+                child: Icon(Icons.delete),
+                backgroundColor: Colors.red,
+              ),
+            ))
+          ],
+        ),
+      );
+    }
+    return rows;
+  }
+
+  String notify() {
+    return 'uyarı';
+  }
+
+  deleteRow(int id, int i) {
+    deleteAlbum(id.toString());
+    debugPrint(rows[i].toString());
+    debugPrint("before remove");
+    rows.clear();
+    debugPrint(rows.length.toString());
+  }
 
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchAlbum();
+    basketAlbum = fetchProducts();
+    setState(() {
+      notify();
+    });
   }
 
   @override
@@ -73,7 +106,7 @@ class _BasketTableState extends State<BasketTable> {
               BoxConstraints.expand(width: MediaQuery.of(context).size.width),
           child: SingleChildScrollView(
             child: FutureBuilder<List>(
-              future: futureAlbum,
+              future: basketAlbum,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return DataTable(
@@ -101,25 +134,8 @@ class _BasketTableState extends State<BasketTable> {
                         child: Icon(Icons.delete),
                       ))),
                     ],
-                    // rows: <DataRow>[
-                    //   DataRow(
-                    //     cells: <DataCell>[
-                    //       DataCell(Center(
-                    //         child: Text('${snapshot.data!.length}'),
-                    //       )),
-                    //     ],
-                    //   ),
-                    //   DataRow(
-                    //     cells: <DataCell>[
-                    //       DataCell(Center(
-                    //         child: Text('${snapshot.data![1].name}'),
-                    //       )),
-                    //     ],
-                    //   ),
-                    // ],
                     rows: createRows(snapshot.data!),
                   );
-                  // return Text(snapshot.data!.name);
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
