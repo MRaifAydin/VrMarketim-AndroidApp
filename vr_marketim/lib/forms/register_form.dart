@@ -1,5 +1,31 @@
 import 'package:flutter/material.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:vr_marketim/models/user.dart';
+
+Future<User> createAlbum(User deneme) async {
+  final response =
+      await http.post(Uri.parse('http://10.0.2.2:5002/api/accounts'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+          body: jsonEncode(deneme.toJson()));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+    debugPrint("deneme");
+
+    return User.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create album.');
+  }
+}
+
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key? key}) : super(key: key);
 
@@ -9,6 +35,13 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final mailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final passwordAController = TextEditingController();
+  final nameController = TextEditingController();
+  final surnameController = TextEditingController();
+  final addressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +54,7 @@ class _RegisterFormState extends State<RegisterForm> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: TextFormField(
+                controller: mailController,
                 decoration: const InputDecoration(
                   hintText: 'Email',
                 ),
@@ -35,6 +69,7 @@ class _RegisterFormState extends State<RegisterForm> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: TextFormField(
+                controller: passwordController,
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
@@ -52,6 +87,7 @@ class _RegisterFormState extends State<RegisterForm> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: TextFormField(
+                controller: passwordAController,
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
@@ -69,6 +105,7 @@ class _RegisterFormState extends State<RegisterForm> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: TextFormField(
+                controller: nameController,
                 decoration: const InputDecoration(
                   hintText: 'Name',
                 ),
@@ -83,6 +120,7 @@ class _RegisterFormState extends State<RegisterForm> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: TextFormField(
+                controller: surnameController,
                 decoration: const InputDecoration(
                   hintText: 'Surname',
                 ),
@@ -97,6 +135,7 @@ class _RegisterFormState extends State<RegisterForm> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: TextFormField(
+                controller: addressController,
                 decoration: const InputDecoration(
                   hintText: 'Address',
                 ),
@@ -116,6 +155,25 @@ class _RegisterFormState extends State<RegisterForm> {
                   // the form is invalid.
                   if (_formKey.currentState!.validate()) {
                     // Process data.
+
+                    if (passwordController.text == passwordAController.text) {
+                      createAlbum(User(
+                          mail: mailController.text,
+                          password: passwordController.text,
+                          name: nameController.text,
+                          surname: surnameController.text,
+                          address: addressController.text));
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const AlertDialog(
+                            // Retrieve the text the that user has entered by using the
+                            // TextEditingController.
+                            content: Text("Registered"),
+                          );
+                        },
+                      );
+                    }
                   }
                 },
                 child: const Text('Register'),

@@ -1,15 +1,16 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:vr_marketim/basketEntity.dart';
-import 'package:vr_marketim/products.dart';
+import 'package:vr_marketim/models/products.dart';
 
 Future<List> fetchProducts() async {
   final response = await http
-      .get(Uri.parse('http://10.0.2.2:5002/api/baskets/getAllBasket/123321'));
+      .get(Uri.parse('http://10.0.2.2:5002/api/baskets/getAllBasket/15'));
 
   if (response.statusCode == 200) {
     List products = (json.decode(response.body) as List)
@@ -21,17 +22,6 @@ Future<List> fetchProducts() async {
     // then throw an exception.
     throw Exception('Failed to load album');
   }
-}
-
-Future<http.Response> deleteAlbum(String id) async {
-  final http.Response response = await http.delete(
-    Uri.parse('http://10.0.2.2:5002/api/baskets/123321/' + id),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-  );
-
-  return response;
 }
 
 class BasketTable extends StatefulWidget {
@@ -46,6 +36,7 @@ class _BasketTableState extends State<BasketTable> {
   List<DataRow> rows = [];
 
   List<DataRow> createRows(snapshot) {
+    int sum = 0;
     for (int i = 0; i < snapshot.length; i++) {
       rows.add(
         DataRow(
@@ -57,35 +48,42 @@ class _BasketTableState extends State<BasketTable> {
               child: Text(snapshot[i].description.toString()),
             )),
             DataCell(Center(
-              child: FloatingActionButton.small(
-                heroTag: i,
-                onPressed: () {
-                  setState(() {
-                    deleteRow(snapshot[i].id, i);
-                    debugPrint("setted state");
-                  });
-                },
-                child: Icon(Icons.delete),
-                backgroundColor: Colors.red,
-              ),
-            ))
+              child: Text(snapshot[i].pcs.toString() + "TL"),
+            )),
           ],
         ),
       );
+      sum = sum + int.parse(snapshot[i].pcs.toString());
     }
+    rows.add(
+      DataRow(
+        cells: <DataCell>[
+          DataCell(Center(
+            child: Text(
+              "Toplam",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+          )),
+          DataCell(Center(
+            child: Text(
+              "Fiyat",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+          )),
+          DataCell(Center(
+            child: Text(
+              sum.toString() + "TL",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+          )),
+        ],
+      ),
+    );
     return rows;
   }
 
   String notify() {
     return 'uyarı';
-  }
-
-  deleteRow(int id, int i) {
-    deleteAlbum(id.toString());
-    debugPrint(rows[i].toString());
-    debugPrint("before remove");
-    rows.clear();
-    debugPrint(rows.length.toString());
   }
 
   @override
@@ -129,10 +127,12 @@ class _BasketTableState extends State<BasketTable> {
                       )),
                       DataColumn(
                           label: Expanded(
-                              child: FloatingActionButton.small(
-                        onPressed: null,
-                        child: Icon(Icons.delete),
-                      ))),
+                        child: Text(
+                          'Price',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.center,
+                        ),
+                      )),
                     ],
                     rows: createRows(snapshot.data!),
                   );
